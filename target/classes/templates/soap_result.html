@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="hu" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Eredmény</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<h1>Árfolyamok</h1>
+<p th:text="'Deviza: ' + ${currency}"></p>
+<table border="1">
+    <tr>
+        <th>Dátum</th>
+        <th>Árfolyam (HUF)</th>
+    </tr>
+    <tr th:each="r : ${rates}">
+        <td th:text="${r.datum()}"></td>
+        <td th:text="${r.ertek()}"></td>
+    </tr>
+</table>
+<h2>Árfolyam grafikon</h2>
+<div style="width: 100%; max-width: 900px;">
+    <canvas id="arfolyamChart"></canvas>
+</div>
+<a th:href="@{/soap}">Vissza az űrlaphoz</a>
+<script th:inline="javascript">
+    const rates = /*[[${rates}]]*/ [];
+
+    const labels = rates.map(rate => rate.datum);
+    const values = rates.map(rate => rate.ertek);
+
+    const ctx = document.getElementById('arfolyamChart');
+
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: /*[[${currency}]]*/ 'EUR',
+                data: values,
+                borderColor: 'rgb(54, 162, 235)',
+                backgroundColor: 'rgba(54, 162, 235, 0.15)',
+                borderWidth: 2,
+                tension: 0.3,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'MNB árfolyam alakulása'
+                },
+                legend: {
+                    display: true
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: false,
+                    title: {
+                        display: true,
+                        text: 'Árfolyam (HUF)'
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Dátum'
+                    }
+                }
+            }
+        }
+    });
+</script>
+</body>
+</html>
