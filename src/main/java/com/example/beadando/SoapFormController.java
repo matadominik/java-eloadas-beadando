@@ -22,6 +22,7 @@ public class SoapFormController {
     @GetMapping("/soap")
     public String urlap(Model model) {
         model.addAttribute("param", new MessagePrice());
+        model.addAttribute("currentPage", "soap");
         return "soap_form";
     }
 
@@ -31,6 +32,7 @@ public class SoapFormController {
                 messagePrice.getEndDate(), messagePrice.getCurrency());
         model.addAttribute("currency", messagePrice.getCurrency());
         model.addAttribute("rates", lista);
+        model.addAttribute("currentPage", "soap");
         return "soap_result";
     }
 

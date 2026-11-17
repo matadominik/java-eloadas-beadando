@@ -1,79 +1,90 @@
-<!DOCTYPE html>
-<html lang="hu" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(~{::title}, ~{::article})}">
+
 <head>
-    <meta charset="UTF-8">
-    <title>Eredmény</title>
-
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>MNB árfolyamok</title>
 </head>
+
 <body>
-<h1>Árfolyamok</h1>
-<p th:text="'Deviza: ' + ${currency}"></p>
-<table border="1">
-    <tr>
-        <th>Dátum</th>
-        <th>Árfolyam (HUF)</th>
-    </tr>
-    <tr th:each="r : ${rates}">
-        <td th:text="${r.datum()}"></td>
-        <td th:text="${r.ertek()}"></td>
-    </tr>
-</table>
-<h2>Árfolyam grafikon</h2>
-<div style="width: 100%; max-width: 900px;">
-    <canvas id="arfolyamChart"></canvas>
-</div>
-<a th:href="@{/soap}">Vissza az űrlaphoz</a>
-<script th:inline="javascript">
-    const rates = /*[[${rates}]]*/ [];
 
-    const labels = rates.map(rate => rate.datum);
-    const values = rates.map(rate => rate.ertek);
+<article class="panel">
+    <p th:text="'Deviza: ' + ${currency}"></p>
+    <div class="table-wrapper">
+        <table style="width: 100%; table-layout: fixed; text-align: center;">
+            <thead>
+            <tr>
+                <th style="width: 50%; text-align: center;">Dátum</th>
+                <th style="width: 50%; text-align: center;">Árfolyam (HUF)</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="r : ${rates}">
+                <td style="text-align: center;" th:text="${r.datum()}"></td>
+                <td style="text-align: center;" th:text="${r.ertek()}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <h2>Árfolyam grafikon</h2>
+    <div style="width: 100%; max-width: 900px;">
+        <canvas id="arfolyamChart"></canvas>
+    </div>
+    <a th:href="@{/soap}">Vissza az űrlaphoz</a>
+    <script th:inline="javascript">
+        document.addEventListener('DOMContentLoaded', function () {
 
-    const ctx = document.getElementById('arfolyamChart');
+            const rates = /*[[${rates}]]*/ [];
 
-    new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: /*[[${currency}]]*/ 'EUR',
-                data: values,
-                borderColor: 'rgb(54, 162, 235)',
-                backgroundColor: 'rgba(54, 162, 235, 0.15)',
-                borderWidth: 2,
-                tension: 0.3,
-                fill: true
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                title: {
-                    display: true,
-                    text: 'MNB árfolyam alakulása'
+            const labels = rates.map(rate => rate.datum);
+            const values = rates.map(rate => rate.ertek);
+
+            const ctx = document.getElementById('arfolyamChart');
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: /*[[${currency}]]*/ 'EUR',
+                        data: values,
+                        borderColor: 'rgb(54, 162, 235)',
+                        backgroundColor: 'rgba(54, 162, 235, 0.15)',
+                        borderWidth: 2,
+                        tension: 0.3,
+                        fill: true
+                    }]
                 },
-                legend: {
-                    display: true
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: false,
-                    title: {
-                        display: true,
-                        text: 'Árfolyam (HUF)'
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'MNB árfolyam alakulása'
+                        },
+                        legend: {
+                            display: true
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            title: {
+                                display: true,
+                                text: 'Árfolyam (HUF)'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Dátum'
+                            }
+                        }
                     }
-                },
-                x: {
-                    title: {
-                        display: true,
-                        text: 'Dátum'
-                    }
                 }
-            }
-        }
-    });
-</script>
+            });
+        });
+    </script>
+</article>
+
 </body>
 </html>

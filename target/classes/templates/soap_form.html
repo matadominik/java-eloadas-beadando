@@ -1,22 +1,49 @@
-<!DOCTYPE html>
-<html lang="hu" xmlns:th="http://www.thymeleaf.org">
+
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(~{::title}, ~{::article})}">
+
 <head>
-    <meta charset="UTF-8">
     <title>MNB árfolyamok</title>
 </head>
+
 <body>
-<h1>MNB árfolyam lekérdezés</h1>
-<form th:action="@{/soap}" th:object="${param}" method="post">
-    Deviza:
-    <select th:field="*{currency}">
-        <option value="EUR">EUR</option>
-        <option value="USD">USD</option>
-        <option value="GBP">GBP</option>
-        <option value="JPY">JPY</option>
-    </select><br>
-    Kezdő dátum: <input type="date" th:field="*{startDate}"><br>
-    Befejező dátum: <input type="date" th:field="*{endDate}"><br>
-    <input type="submit" value="Lekérdezés">
-</form>
+
+<article class="panel">
+    <header>
+        <h2>MNB árfolyamlekérdezés</h2>
+        <p>Válaszd ki a kívánt devizát és az időszakot!</p>
+    </header>
+
+    <form th:action="@{/soap}" th:object="${param}" method="post">
+
+        <div class="row">
+            <div class="col-12">
+                <label for="currency">Deviza</label>
+                <select id="currency" th:field="*{currency}">
+                    <option value="EUR">EUR</option>
+                    <option value="USD">USD</option>
+                    <option value="GBP">GBP</option>
+                    <option value="JPY">JPY</option>
+                </select>
+            </div>
+
+            <div class="col-6 col-12-small">
+                <label for="startDate">Kezdő dátum</label>
+                <input id="startDate" type="date" th:field="*{startDate}">
+            </div>
+
+            <div class="col-6 col-12-small">
+                <label for="endDate">Befejező dátum</label>
+                <input id="endDate" type="date" th:field="*{endDate}">
+            </div>
+
+            <div class="col-12">
+                <input type="submit" value="Lekérdezés">
+            </div>
+        </div>
+
+    </form>
+</article>
+
 </body>
 </html>

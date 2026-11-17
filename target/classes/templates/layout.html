@@ -1,0 +1,66 @@
+<!DOCTYPE HTML>
+<html lang="hu"
+      xmlns:th="http://www.thymeleaf.org"
+      th:fragment="layout(title, content)">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, user-scalable=no" />
+
+    <title th:replace="${title}">Devizafigyelő</title>
+
+    <link rel="stylesheet" th:href="@{/assets/css/main.css}" />
+    <noscript>
+        <link rel="stylesheet" th:href="@{/assets/css/noscript.css}" />
+    </noscript>
+</head>
+
+<body class="is-preload">
+
+<div id="wrapper">
+
+    <!-- Navigáció -->
+    <nav id="nav">
+        <a th:href="@{/home}" class="icon solid fa-home"
+           th:classappend="${currentPage == 'home'} ? ' active' : ''">
+            <span>Főoldal</span>
+        </a>
+
+        <a th:href="@{/soap}" class="icon solid fa-chart-line"
+           th:classappend="${currentPage == 'soap'} ? ' active' : ''">
+            <span>MNB</span>
+        </a>
+
+        <a href="#" class="icon solid fa-dollar-sign">
+            <span>Forex</span>
+        </a>
+    </nav>
+
+    <!-- Aktuális oldal tartalma -->
+    <div id="main">
+        <th:block th:replace="${content}"></th:block>
+    </div>
+
+    <!-- Footer -->
+    <div id="footer">
+        <ul class="copyright">
+            <li>Devizafigyelő alkalmazás</li>
+            <li><a href="https://github.com/matadominik" target="_blank">Mata László Dominik (@mataldominik - B223VA)</a></li>
+            <li><a href="https://github.com/bencuska0812" target="_blank">Fazekas Bence (@bencuska0812 - ZK6FMO)</a></li>
+        </ul>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- Közös JavaScript fájlok -->
+<script th:src="@{/assets/js/jquery.min.js}"></script>
+<script th:src="@{/assets/js/browser.min.js}"></script>
+<script th:src="@{/assets/js/breakpoints.min.js}"></script>
+<script th:src="@{/assets/js/util.js}"></script>
+<script th:src="@{/assets/js/main.js}"></script>
+
+</body>
+</html>
