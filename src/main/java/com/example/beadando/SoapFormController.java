@@ -1,7 +1,10 @@
-package com.example.beadando; // a te csomagnevedet írd ide
+package com.example.beadando;
 
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -14,21 +17,27 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
-@RestController
-public class SoapController {
-
-    @GetMapping("/soap-teszt")
-    public String teszt() throws Exception {
-        MNBArfolyamServiceSoapImpl impl = new MNBArfolyamServiceSoapImpl();
-        MNBArfolyamServiceSoap service = impl.getCustomBindingMNBArfolyamServiceSoap();
-        return service.getExchangeRates("2026-10-01", "2026-11-01", "EUR");
+@Controller
+public class SoapFormController {
+    @GetMapping("/soap")
+    public String urlap(Model model) {
+        model.addAttribute("param", new MessagePrice());
+        return "soap_form";
     }
 
-    @GetMapping("/soap-teszt2")
-    public List<Arfolyam> teszt2() throws Exception {
+    @PostMapping("/soap")
+    public String eredmeny(@ModelAttribute MessagePrice messagePrice, Model model) throws Exception {
+        List<Arfolyam> lista = lekerdez(messagePrice.getStartDate(),
+                messagePrice.getEndDate(), messagePrice.getCurrency());
+        model.addAttribute("currency", messagePrice.getCurrency());
+        model.addAttribute("rates", lista);
+        return "soap_result";
+    }
+
+    private List<Arfolyam> lekerdez(String kezdo, String veg, String deviza) throws Exception {
         MNBArfolyamServiceSoapImpl impl = new MNBArfolyamServiceSoapImpl();
         MNBArfolyamServiceSoap service = impl.getCustomBindingMNBArfolyamServiceSoap();
-        String xml = service.getExchangeRates("2026-10-01", "2026-11-01", "EUR");
+        String xml = service.getExchangeRates(kezdo, veg, deviza);
 
         Document doc = DocumentBuilderFactory.newInstance()
                 .newDocumentBuilder()
@@ -36,7 +45,7 @@ public class SoapController {
         NodeList napok = doc.getElementsByTagName("Day");
 
         List<Arfolyam> lista = new ArrayList<>();
-        for (int i = napok.getLength() - 1; i >= 0; i--) {   // visszafelé: régebbitől az újabbig
+        for (int i = napok.getLength() - 1; i >= 0; i--) {
             Element nap = (Element) napok.item(i);
             Element rate = (Element) nap.getElementsByTagName("Rate").item(0);
             double ertek = Double.parseDouble(rate.getTextContent().replace(",", "."));

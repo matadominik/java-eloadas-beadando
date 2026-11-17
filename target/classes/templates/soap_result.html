@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="hu" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Eredmény</title>
+</head>
+<body>
+<h1>Árfolyamok</h1>
+<p th:text="'Deviza: ' + ${currency}"></p>
+<table border="1">
+    <tr><th>Dátum</th><th>Árfolyam (HUF)</th></tr>
+    <tr th:each="r : ${rates}">
+        <td th:text="${r.datum()}"></td>
+        <td th:text="${r.ertek()}"></td>
+    </tr>
+</table>
+<a th:href="@{/soap}">Vissza az űrlaphoz</a>
+</body>
+</html>
