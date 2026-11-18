@@ -7,6 +7,11 @@
 
 <body>
 
+<style>
+    .chart-box { position: relative; width: 100%; max-width: 900px; height: 380px; }
+    @media (max-width: 600px) { .chart-box { height: 300px; } }
+</style>
+
 <article class="panel">
     <p th:text="'Deviza: ' + ${currency}"></p>
     <div class="table-wrapper">
@@ -26,7 +31,7 @@
         </table>
     </div>
     <h2>Árfolyam grafikon</h2>
-    <div style="width: 100%; max-width: 900px;">
+    <div class="chart-box">
         <canvas id="arfolyamChart"></canvas>
     </div>
     <a th:href="@{/soap}">Vissza az űrlaphoz</a>
@@ -56,6 +61,7 @@
                 },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
                     plugins: {
                         title: {
                             display: true,
@@ -74,6 +80,11 @@
                             }
                         },
                         x: {
+                            ticks: {
+                                autoSkip: true,
+                                maxTicksLimit: 6,
+                                maxRotation: 0
+                            },
                             title: {
                                 display: true,
                                 text: 'Dátum'
