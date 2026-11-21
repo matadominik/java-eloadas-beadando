@@ -1,0 +1,70 @@
+
+<!DOCTYPE HTML>
+<html lang="hu"
+      xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(~{::title}, ~{::article})}">
+
+<head>
+  <title>Forex HistÁr</title>
+</head>
+
+<body>
+
+<article class="panel">
+  <header>
+    <h2>Forex HistÁr</h2>
+    <p>Historikus árfolyamok lekérése</p>
+  </header>
+
+  <form th:action="@{/forex/history}" method="get">
+    <div class="row">
+      <div class="col-12">
+        <label for="instrument">Devizapár</label>
+        <select name="instrument" id="instrument">
+          <option th:each="item : ${instruments}"
+                  th:value="${item}"
+                  th:text="${item}"
+                  th:selected="${item == selectedInstrument}">
+          </option>
+        </select>
+      </div>
+
+      <div class="col-12">
+        <label for="granularity">Időintervallum</label>
+        <select name="granularity" id="granularity">
+          <option th:each="item : ${granularities}"
+                  th:value="${item}"
+                  th:text="${item}"
+                  th:selected="${item == selectedGranularity}">
+          </option>
+        </select>
+      </div>
+    </div>
+
+    <ul class="actions">
+      <li>
+        <input type="submit" value="Historikus árak lekérése" />
+      </li>
+    </ul>
+  </form>
+
+  <div th:if="${error != null}">
+    <p th:text="${error}"></p>
+  </div>
+
+  <div th:if="${historyData != null}">
+    <h3>Utolsó 10 gyertya adatai</h3>
+    <pre th:text="${historyData}"></pre>
+  </div>
+
+  <p>
+    <a th:href="@{/forex/price}">Forex AktÁr</a>
+  </p>
+
+  <p>
+    <a th:href="@{/forex/account}">Forex Account</a>
+  </p>
+</article>
+
+</body>
+</html>

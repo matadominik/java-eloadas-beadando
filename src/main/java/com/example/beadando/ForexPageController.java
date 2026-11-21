@@ -52,4 +52,44 @@ public class ForexPageController {
         model.addAttribute("currentPage", "forex");
         return "forex_price";
     }
+
+    @GetMapping("/forex/history")
+    public String history(
+            @RequestParam(defaultValue = "EUR_USD") String instrument,
+            @RequestParam(defaultValue = "H1") String granularity,
+            Model model
+    ) {
+        String[] instruments = {
+                "EUR_USD", "GBP_USD", "USD_JPY", "USD_CHF",
+                "AUD_USD", "USD_CAD", "EUR_GBP", "EUR_JPY"
+        };
+
+        String[] granularities = {
+                "M1", "M5", "M15", "M30", "H1", "H4", "D"
+        };
+
+        if (!java.util.Arrays.asList(instruments).contains(instrument)) {
+            instrument = "EUR_USD";
+        }
+
+        if (!java.util.Arrays.asList(granularities).contains(granularity)) {
+            granularity = "H1";
+        }
+
+        model.addAttribute("instruments", instruments);
+        model.addAttribute("granularities", granularities);
+        model.addAttribute("selectedInstrument", instrument);
+        model.addAttribute("selectedGranularity", granularity);
+
+        try {
+            model.addAttribute("historyData", forexApiClient.getHistory(instrument, granularity));
+            model.addAttribute("error", null);
+        } catch (Exception e) {
+            model.addAttribute("historyData", null);
+            model.addAttribute("error", "A historikus árfolyamok lekérése sikertelen. Ellenőrizd az OANDA API hozzáférést.");
+        }
+
+        model.addAttribute("currentPage", "forex");
+        return "forex_history";
+    }
 }

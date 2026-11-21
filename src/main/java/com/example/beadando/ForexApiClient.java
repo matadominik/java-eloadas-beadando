@@ -37,4 +37,12 @@ public class ForexApiClient {
                 .retrieve()
                 .body(String.class);
     }
+
+    public String getHistory(String instrument, String granularity) {
+        return restClient.get()
+                .uri("/v3/instruments/{instrument}/candles?granularity={granularity}&count=10&price=M",
+                        instrument, granularity)
+                .retrieve()
+                .body(String.class);
+    }
 }
