@@ -1,0 +1,41 @@
+<!DOCTYPE HTML>
+<html lang="hu"
+      xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(~{::title}, ~{::article})}">
+
+<head>
+    <title>Forex Poz</title>
+</head>
+
+<body>
+
+<article class="panel">
+    <header>
+        <h2>Forex Poz</h2>
+        <p>Nyitott kereskedési pozíciók</p>
+    </header>
+
+    <div th:if="${error != null}">
+        <p th:text="${error}"></p>
+    </div>
+
+    <div th:if="${positions != null}">
+        <h3>Nyitott pozíciók adatai</h3>
+        <pre th:text="${positions}"></pre>
+    </div>
+
+    <p>
+        <a th:href="@{/forex/open}">Új pozíció nyitása</a>
+    </p>
+
+    <p>
+        <a th:href="@{/forex/account}">Forex Account</a>
+    </p>
+
+    <p>
+        <a th:href="@{/forex/close}">Forex Zár</a>
+    </p>
+</article>
+
+</body>
+</html>

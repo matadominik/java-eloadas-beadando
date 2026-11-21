@@ -1,0 +1,63 @@
+<!DOCTYPE HTML>
+<html lang="hu"
+      xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(~{::title}, ~{::article})}">
+
+<head>
+  <title>Forex Zár</title>
+</head>
+
+<body>
+
+<article class="panel">
+  <header>
+    <h2>Forex Zár</h2>
+    <p>Nyitott kereskedési pozíció lezárása</p>
+  </header>
+
+  <form th:action="@{/forex/close}" method="post">
+    <div class="row">
+      <div class="col-12">
+        <label for="tradeId">Trade ID</label>
+        <input type="number"
+               name="tradeId"
+               id="tradeId"
+               min="1"
+               step="1"
+               required
+               th:value="${tradeId}"
+               placeholder="Add meg a lezárandó Trade ID-t">
+      </div>
+    </div>
+
+    <ul class="actions">
+      <li>
+        <input type="submit" value="Pozíció lezárása">
+      </li>
+    </ul>
+  </form>
+
+  <div th:if="${error != null}">
+    <p th:text="${error}"></p>
+  </div>
+
+  <div th:if="${result != null}">
+    <h3>Lezárás eredménye</h3>
+    <pre th:text="${result}"></pre>
+  </div>
+
+  <p>
+    <a th:href="@{/forex/positions}">Nyitott pozíciók</a>
+  </p>
+
+  <p>
+    <a th:href="@{/forex/open}">Forex Nyit</a>
+  </p>
+
+  <p>
+    <a th:href="@{/forex/account}">Forex Account</a>
+  </p>
+</article>
+
+</body>
+</html>

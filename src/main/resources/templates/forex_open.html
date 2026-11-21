@@ -1,0 +1,77 @@
+
+<!DOCTYPE HTML>
+<html lang="hu"
+      xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(~{::title}, ~{::article})}">
+
+<head>
+  <title>Forex Nyit</title>
+</head>
+
+<body>
+
+<article class="panel">
+  <header>
+    <h2>Forex Nyit</h2>
+    <p>Piaci pozíció nyitása</p>
+  </header>
+
+  <form th:action="@{/forex/open}" method="post">
+    <div class="row">
+      <div class="col-12">
+        <label for="instrument">Devizapár</label>
+        <select name="instrument" id="instrument">
+          <option th:each="item : ${instruments}"
+                  th:value="${item}"
+                  th:text="${item}"
+                  th:selected="${item == selectedInstrument}">
+          </option>
+        </select>
+      </div>
+
+      <div class="col-12">
+        <label for="units">Mennyiség</label>
+        <input type="number"
+               name="units"
+               id="units"
+               step="1"
+               required
+               placeholder="Pozitív = Long, negatív = Short">
+      </div>
+    </div>
+
+    <ul class="actions">
+      <li>
+        <input type="submit" value="Pozíció megnyitása">
+      </li>
+    </ul>
+  </form>
+
+  <div th:if="${error != null}">
+    <p th:text="${error}"></p>
+  </div>
+
+  <div th:if="${result != null}">
+    <h3>Válasz</h3>
+    <pre th:text="${result}"></pre>
+  </div>
+
+  <p>
+    Pozitív mennyiség: Long
+  </p>
+
+  <p>
+    Negatív mennyiség: Short
+  </p>
+
+  <p>
+    <a th:href="@{/forex/positions}">Nyitott pozíciók</a>
+  </p>
+
+  <p>
+    <a th:href="@{/forex/price}">Forex AktÁr</a>
+  </p>
+</article>
+
+</body>
+</html>

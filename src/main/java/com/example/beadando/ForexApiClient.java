@@ -1,4 +1,3 @@
-
 package com.example.beadando;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -42,6 +41,40 @@ public class ForexApiClient {
         return restClient.get()
                 .uri("/v3/instruments/{instrument}/candles?granularity={granularity}&count=10&price=M",
                         instrument, granularity)
+                .retrieve()
+                .body(String.class);
+    }
+
+    public String getOpenPositions() {
+        return restClient.get()
+                .uri("/v3/accounts/{accountId}/openPositions", accountId)
+                .retrieve()
+                .body(String.class);
+    }
+
+    public String openPosition(String instrument, long units) {
+        String orderJson = """
+                {
+                    "order": {
+                        "type": "MARKET",
+                        "instrument": "%s",
+                        "units": "%d",
+                        "timeInForce": "FOK",
+                        "positionFill": "DEFAULT"
+                    }
+                }
+                """.formatted(instrument, units);
+
+        return restClient.post()
+                .uri("/v3/accounts/{accountId}/orders", accountId)
+                .body(orderJson)
+                .retrieve()
+                .body(String.class);
+    }
+
+    public String closeTrade(long tradeId) {
+        return restClient.post()
+                .uri("/v3/accounts/{accountId}/trades/{tradeId}/close", accountId, tradeId)
                 .retrieve()
                 .body(String.class);
     }
