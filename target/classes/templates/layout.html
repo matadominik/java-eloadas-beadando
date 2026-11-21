@@ -20,7 +20,6 @@
 
 <div id="wrapper">
 
-    <!-- Navigáció -->
     <nav id="nav">
         <a th:href="@{/home}" class="icon solid fa-home"
            th:classappend="${currentPage == 'home'} ? ' active' : ''">
@@ -32,17 +31,21 @@
             <span>MNB</span>
         </a>
 
-        <a th:href="@{/forex/price}" class="icon solid fa-dollar-sign">
+        <a th:href="@{/forex/price}" class="icon solid fa-dollar-sign"
+           th:classappend="${currentPage == 'forex'} ? ' active' : ''">
             <span>Forex</span>
+        </a>
+
+        <a th:href="@{/calculator}" class="icon solid fa-calculator"
+           th:classappend="${currentPage == 'calculator'} ? ' active' : ''">
+            <span>Teszt</span>
         </a>
     </nav>
 
-    <!-- Aktuális oldal tartalma -->
     <div id="main">
         <th:block th:replace="${content}"></th:block>
     </div>
 
-    <!-- Footer -->
     <div id="footer">
         <ul class="copyright">
             <li>Devizafigyelő alkalmazás</li>
@@ -55,7 +58,6 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<!-- Közös JavaScript fájlok -->
 <script th:src="@{/assets/js/jquery.min.js}"></script>
 <script th:src="@{/assets/js/browser.min.js}"></script>
 <script th:src="@{/assets/js/breakpoints.min.js}"></script>

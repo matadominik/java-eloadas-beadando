@@ -1,0 +1,70 @@
+<!DOCTYPE HTML>
+<html lang="hu"
+      xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(~{::title}, ~{::article})}">
+
+<head>
+    <title>Kalkulátor</title>
+</head>
+
+<body>
+
+<article class="panel">
+    <header>
+        <h2>Négy műveletes kalkulátor</h2>
+        <p>Végezz összeadást, kivonást, szorzást vagy osztást!</p>
+    </header>
+
+    <form th:action="@{/calculator}" method="post">
+        <div class="row">
+
+            <div class="col-6 col-12-small">
+                <label for="firstNumber">Első szám</label>
+                <input type="number"
+                       step="any"
+                       id="firstNumber"
+                       name="firstNumber"
+                       required
+                       th:value="${firstNumber}">
+            </div>
+
+            <div class="col-6 col-12-small">
+                <label for="secondNumber">Második szám</label>
+                <input type="number"
+                       step="any"
+                       id="secondNumber"
+                       name="secondNumber"
+                       required
+                       th:value="${secondNumber}">
+            </div>
+
+            <div class="col-12">
+                <label for="operation">Művelet</label>
+                <select id="operation" name="operation" required>
+                    <option value="add" th:selected="${operation == 'add'}">Összeadás (+)</option>
+                    <option value="subtract" th:selected="${operation == 'subtract'}">Kivonás (-)</option>
+                    <option value="multiply" th:selected="${operation == 'multiply'}">Szorzás (*)</option>
+                    <option value="divide" th:selected="${operation == 'divide'}">Osztás (/)</option>
+                </select>
+            </div>
+
+            <div class="col-12">
+                <input type="submit" value="Számítás">
+            </div>
+
+        </div>
+    </form>
+
+    <div th:if="${result != null}">
+        <h3>Eredmény</h3>
+        <p th:text="${result}"></p>
+    </div>
+
+    <div th:if="${error != null}">
+        <h3>Hiba</h3>
+        <p th:text="${error}"></p>
+    </div>
+</article>
+
+</body>
+</html>
