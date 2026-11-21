@@ -1,0 +1,55 @@
+
+<!DOCTYPE HTML>
+<html lang="hu"
+      xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(~{::title}, ~{::article})}">
+
+<head>
+    <title>Forex AktÁr</title>
+</head>
+
+<body>
+
+<article class="panel">
+    <header>
+        <h2>Forex AktÁr</h2>
+        <p>Aktuális árfolyam lekérése</p>
+    </header>
+
+    <form th:action="@{/forex/price}" method="get">
+        <div class="row">
+            <div class="col-12">
+                <label for="instrument">Devizapár</label>
+                <select name="instrument" id="instrument">
+                    <option th:each="item : ${instruments}"
+                            th:value="${item}"
+                            th:text="${item}"
+                            th:selected="${item == selectedInstrument}">
+                    </option>
+                </select>
+            </div>
+        </div>
+
+        <ul class="actions">
+            <li>
+                <input type="submit" value="Árfolyam lekérése" />
+            </li>
+        </ul>
+    </form>
+
+    <div th:if="${error != null}">
+        <p th:text="${error}"></p>
+    </div>
+
+    <div th:if="${priceData != null}">
+        <h3>Lekért adatok</h3>
+        <pre th:text="${priceData}"></pre>
+    </div>
+
+    <p>
+        <a th:href="@{/forex/account}">Forex Account</a>
+    </p>
+</article>
+
+</body>
+</html>
