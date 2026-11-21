@@ -32,7 +32,8 @@
             <span>MNB</span>
         </a>
 
-        <a href="#" class="icon solid fa-dollar-sign">
+        <a th:href="@{/forex/account}" class="icon solid fa-dollar-sign"
+           th:classappend="${currentPage == 'forex'} ? ' active' : ''">
             <span>Forex</span>
         </a>
     </nav>

@@ -1,0 +1,29 @@
+<!DOCTYPE HTML>
+<html lang="hu"
+      xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(~{::title}, ~{::article})}">
+
+<head>
+  <title>Forex Account</title>
+</head>
+
+<body>
+
+<article class="panel">
+  <header>
+    <h2>Forex Account</h2>
+    <p>OANDA kereskedési számla adatai</p>
+  </header>
+
+  <div th:if="${error != null}" class="box">
+    <p th:text="${error}"></p>
+  </div>
+
+  <div th:if="${accountData != null}">
+    <h3>Számlaadatok</h3>
+    <pre th:text="${accountData}"></pre>
+  </div>
+</article>
+
+</body>
+</html>
