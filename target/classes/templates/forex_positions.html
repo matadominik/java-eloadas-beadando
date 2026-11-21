@@ -12,29 +12,59 @@
 <article class="panel">
     <header>
         <h2>Forex Poz</h2>
-        <p>Nyitott kereskedési pozíciók</p>
+        <p>Nyitott kereskedési pozíciók áttekintése</p>
     </header>
 
-    <div th:if="${error != null}">
+    <div th:if="${error != null}" class="box">
+        <h3>Kapcsolati hiba</h3>
         <p th:text="${error}"></p>
     </div>
 
     <div th:if="${positions != null}">
-        <h3>Nyitott pozíciók adatai</h3>
-        <pre th:text="${positions}"></pre>
+        <div class="box">
+            <h3>Nyitott pozíciók</h3>
+            <p>Az OANDA számlán jelenleg lekérhető pozíciók adatai.</p>
+        </div>
+
+        <div class="box">
+            <pre th:text="${positions}" style="white-space: pre-wrap; word-break: break-word;"></pre>
+        </div>
     </div>
 
-    <p>
-        <a th:href="@{/forex/open}">Új pozíció nyitása</a>
-    </p>
+    <div class="row">
+        <div class="col-6 col-12-medium">
+            <ul class="actions">
+                <li>
+                    <a th:href="@{/forex/open}" class="button primary">
+                        Új pozíció nyitása
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="col-6 col-12-medium">
+            <ul class="actions">
+                <li>
+                    <a th:href="@{/forex/close}" class="button">
+                        Pozíció zárása
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
 
     <p>
         <a th:href="@{/forex/account}">Forex Account</a>
     </p>
 
     <p>
-        <a th:href="@{/forex/close}">Forex Zár</a>
+        <a th:href="@{/forex/price}">Forex AktÁr</a>
     </p>
+
+    <p>
+        <a th:href="@{/forex/history}">Forex HistÁr</a>
+    </p>
+
 </article>
 
 </body>

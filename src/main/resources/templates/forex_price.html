@@ -1,4 +1,3 @@
-
 <!DOCTYPE HTML>
 <html lang="hu"
       xmlns:th="http://www.thymeleaf.org"
@@ -32,7 +31,7 @@
 
         <ul class="actions">
             <li>
-                <input type="submit" value="Árfolyam lekérése" />
+                <input type="submit" value="Árfolyam lekérése"/>
             </li>
         </ul>
     </form>
@@ -41,19 +40,124 @@
         <p th:text="${error}"></p>
     </div>
 
-    <div th:if="${priceData != null}">
-        <h3>Lekért adatok</h3>
-        <pre th:text="${priceData}"></pre>
+    <div th:if="${priceData != null}"
+         id="price-data"
+         th:attr="data-price=${priceData},data-instrument=${selectedInstrument}">
+
+        <h3>Lekért árfolyam</h3>
+
+        <p id="price-info"></p>
+
+        <div class="row">
+            <div class="col-6 col-12-medium">
+                <div class="price-card">
+                    <h4>Vételi ár (Bid)</h4>
+                    <h2 id="bid-price">-</h2>
+                </div>
+            </div>
+
+            <div class="col-6 col-12-medium">
+                <div class="price-card">
+                    <h4>Eladási ár (Ask)</h4>
+                    <h2 id="ask-price">-</h2>
+                </div>
+            </div>
+
+            <div class="col-12">
+                <div class="price-card">
+                    <h4>Spread</h4>
+                    <h3 id="spread-price">-</h3>
+                </div>
+            </div>
+        </div>
+
+        <p id="price-error"></p>
     </div>
 
     <p>
         <a th:href="@{/forex/history}">Forex HistÁr</a>
     </p>
 
-
     <p>
         <a th:href="@{/forex/account}">Forex Account</a>
     </p>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const container = document.getElementById("price-data");
+
+            if (!container) {
+                return;
+            }
+
+            try {
+                const data = JSON.parse(container.dataset.price);
+                const prices = data.prices || [];
+
+                if (prices.length === 0) {
+                    document.getElementById("price-error").textContent =
+                        "Nem érkezett árfolyamadat.";
+                    return;
+                }
+
+                const price = prices[0];
+                const bid = Number(price.bids?.[0]?.price);
+                const ask = Number(price.asks?.[0]?.price);
+
+                document.getElementById("price-info").textContent =
+                    "Devizapár: " + (price.instrument || container.dataset.instrument) +
+                    " | Időpont: " + (price.time || data.time || "Nincs adat");
+
+                if (!Number.isNaN(bid)) {
+                    document.getElementById("bid-price").textContent =
+                        bid.toFixed(5);
+                }
+
+                if (!Number.isNaN(ask)) {
+                    document.getElementById("ask-price").textContent =
+                        ask.toFixed(5);
+                }
+
+                if (!Number.isNaN(bid) && !Number.isNaN(ask)) {
+                    document.getElementById("spread-price").textContent =
+                        (ask - bid).toFixed(5);
+                }
+
+            } catch (error) {
+                document.getElementById("price-error").textContent =
+                    "Az árfolyamadatok feldolgozása sikertelen.";
+                console.error(error);
+            }
+        });
+    </script>
+
+    <style>
+        .price-card {
+            padding: 1.5em;
+            margin-bottom: 1em;
+            background: #f5f5f5;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .price-card h4 {
+            margin-bottom: 0.5em;
+        }
+
+        .price-card h2,
+        .price-card h3 {
+            margin-bottom: 0;
+            word-break: break-word;
+        }
+
+        #price-info {
+            margin-bottom: 1.5em;
+        }
+
+        #price-error {
+            color: #b00020;
+        }
+    </style>
 </article>
 
 </body>

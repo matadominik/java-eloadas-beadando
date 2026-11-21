@@ -15,14 +15,57 @@
     <p>OANDA kereskedési számla adatai</p>
   </header>
 
-  <div th:if="${error != null}" class="box">
-    <p th:text="${error}"></p>
-  </div>
+  <section th:if="${connected}" class="box">
+    <h3>
+      <span class="icon solid fa-check-circle"></span>
+      API kapcsolat aktív
+    </h3>
+    <p>
+      Az alkalmazás sikeresen csatlakozott az OANDA szolgáltatásához,
+      és lekérte a kereskedési számlákat.
+    </p>
+  </section>
 
-  <div th:if="${accountData != null}">
-    <h3>Számlaadatok</h3>
-    <pre th:text="${accountData}"></pre>
-  </div>
+  <section th:if="${error != null}" class="box">
+    <h3>
+      <span class="icon solid fa-exclamation-circle"></span>
+      Kapcsolati hiba
+    </h3>
+    <p th:text="${error}"></p>
+  </section>
+
+  <section th:if="${connected}" class="box">
+    <h3>Számla összesítő</h3>
+
+    <div class="row">
+      <div class="col-6 col-12-mobile">
+        <h4>Számlatípus</h4>
+        <p class="major">Demo</p>
+      </div>
+
+      <div class="col-6 col-12-mobile">
+        <h4>Elérhető számlák</h4>
+        <p class="major" th:text="${accountCount}">1</p>
+      </div>
+    </div>
+  </section>
+
+  <section th:if="${connected and accountCount > 0}" class="box">
+    <h3>Számlaazonosítók</h3>
+
+    <div th:each="accountId : ${accountIds}">
+      <p>
+        <strong th:text="${accountId}"></strong>
+      </p>
+    </div>
+  </section>
+
+  <footer th:if="${connected}">
+    <p>
+      A számlaadatok az OANDA API-n keresztül érkeznek.
+      Az API-token biztonsági okokból nem jelenik meg a felületen.
+    </p>
+  </footer>
 </article>
 
 </body>

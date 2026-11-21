@@ -3,6 +3,7 @@ package com.example.beadando;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestClientResponseException;
 
 @Service
 public class ForexApiClient {
@@ -31,10 +32,19 @@ public class ForexApiClient {
     }
 
     public String getPrice(String instrument) {
-        return restClient.get()
-                .uri("/v3/accounts/{accountId}/pricing?instruments={instrument}", accountId, instrument)
-                .retrieve()
-                .body(String.class);
+        try {
+            return restClient.get()
+                    .uri("/v3/accounts/{accountId}/pricing?instruments={instrument}",
+                            accountId, instrument)
+                    .retrieve()
+                    .body(String.class);
+        } catch (RestClientResponseException e) {
+            throw new RuntimeException(
+                    "OANDA HTTP " + e.getStatusCode().value()
+                            + ": " + e.getResponseBodyAsString(),
+                    e
+            );
+        }
     }
 
     public String getHistory(String instrument, String granularity) {
@@ -46,10 +56,18 @@ public class ForexApiClient {
     }
 
     public String getOpenPositions() {
-        return restClient.get()
-                .uri("/v3/accounts/{accountId}/openPositions", accountId)
-                .retrieve()
-                .body(String.class);
+        try {
+            return restClient.get()
+                    .uri("/v3/accounts/{accountId}/openPositions", accountId)
+                    .retrieve()
+                    .body(String.class);
+        } catch (RestClientResponseException e) {
+            throw new RuntimeException(
+                    "OANDA HTTP " + e.getStatusCode().value()
+                            + ": " + e.getResponseBodyAsString(),
+                    e
+            );
+        }
     }
 
     public String openPosition(String instrument, long units) {
@@ -74,7 +92,8 @@ public class ForexApiClient {
 
     public String closeTrade(long tradeId) {
         return restClient.post()
-                .uri("/v3/accounts/{accountId}/trades/{tradeId}/close", accountId, tradeId)
+                .uri("/v3/accounts/{accountId}/trades/{tradeId}/close",
+                        accountId, tradeId)
                 .retrieve()
                 .body(String.class);
     }

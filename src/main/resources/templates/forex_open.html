@@ -1,15 +1,11 @@
-
 <!DOCTYPE HTML>
 <html lang="hu"
       xmlns:th="http://www.thymeleaf.org"
       th:replace="~{layout :: layout(~{::title}, ~{::article})}">
-
 <head>
   <title>Forex Nyit</title>
 </head>
-
 <body>
-
 <article class="panel">
   <header>
     <h2>Forex Nyit</h2>
@@ -40,6 +36,18 @@
       </div>
     </div>
 
+    <div class="position-info">
+      <div class="position-direction">
+        <span class="direction-long">Long</span>
+        <span>pozitív mennyiség</span>
+      </div>
+
+      <div class="position-direction">
+        <span class="direction-short">Short</span>
+        <span>negatív mennyiség</span>
+      </div>
+    </div>
+
     <ul class="actions">
       <li>
         <input type="submit" value="Pozíció megnyitása">
@@ -47,31 +55,247 @@
     </ul>
   </form>
 
-  <div th:if="${error != null}">
+  <div th:if="${error != null}" class="error-box">
+    <h3>Hiba történt</h3>
     <p th:text="${error}"></p>
   </div>
 
-  <div th:if="${result != null}">
-    <h3>Válasz</h3>
-    <pre th:text="${result}"></pre>
+  <div th:if="${result != null}" id="order-result" th:attr="data-result=${result}">
+    <h3>Tranzakció eredménye</h3>
+
+    <div class="result-card">
+      <div class="result-header">
+        <span id="result-status" class="result-status">Feldolgozás</span>
+      </div>
+
+      <div class="result-grid">
+        <div class="result-item">
+          <span class="result-label">Devizapár</span>
+          <strong id="result-instrument">-</strong>
+        </div>
+
+        <div class="result-item">
+          <span class="result-label">Irány</span>
+          <strong id="result-direction">-</strong>
+        </div>
+
+        <div class="result-item">
+          <span class="result-label">Mennyiség</span>
+          <strong id="result-units">-</strong>
+        </div>
+
+        <div class="result-item">
+          <span class="result-label">Tranzakció ID</span>
+          <strong id="result-id">-</strong>
+        </div>
+      </div>
+
+      <div id="result-reason-box" class="result-reason" style="display:none;">
+        <strong>Végrehajtás oka</strong>
+        <p id="result-reason"></p>
+      </div>
+    </div>
+
+    <p id="result-error"></p>
   </div>
 
-  <p>
-    Pozitív mennyiség: Long
-  </p>
+  <p><a th:href="@{/forex/positions}">Nyitott pozíciók megtekintése</a></p>
+  <p><a th:href="@{/forex/price}">Forex AktÁr</a></p>
 
-  <p>
-    Negatív mennyiség: Short
-  </p>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const container = document.getElementById("order-result");
 
-  <p>
-    <a th:href="@{/forex/positions}">Nyitott pozíciók</a>
-  </p>
+      if (!container) {
+        return;
+      }
 
-  <p>
-    <a th:href="@{/forex/price}">Forex AktÁr</a>
-  </p>
+      try {
+        const data = JSON.parse(container.dataset.result);
+
+        const createTransaction = data.orderCreateTransaction || {};
+        const fillTransaction = data.orderFillTransaction || {};
+        const cancelTransaction = data.orderCancelTransaction || {};
+
+        const transaction = fillTransaction.id
+                ? fillTransaction
+                : cancelTransaction.id
+                        ? cancelTransaction
+                        : createTransaction;
+
+        const instrument = createTransaction.instrument || fillTransaction.instrument || "-";
+        const units = createTransaction.units || fillTransaction.units || "-";
+        const transactionId = transaction.id || "-";
+
+        document.getElementById("result-instrument").textContent = instrument;
+        document.getElementById("result-units").textContent = units;
+        document.getElementById("result-id").textContent = transactionId;
+
+        const directionElement = document.getElementById("result-direction");
+        const numericUnits = Number(units);
+
+        if (!Number.isNaN(numericUnits)) {
+          if (numericUnits > 0) {
+            directionElement.textContent = "Long";
+            directionElement.className = "direction-long";
+          } else if (numericUnits < 0) {
+            directionElement.textContent = "Short";
+            directionElement.className = "direction-short";
+          } else {
+            directionElement.textContent = "-";
+          }
+        }
+
+        const statusElement = document.getElementById("result-status");
+        const reasonBox = document.getElementById("result-reason-box");
+        const reasonElement = document.getElementById("result-reason");
+
+        if (data.orderFillTransaction) {
+          statusElement.textContent = "Sikeresen végrehajtva";
+          statusElement.className = "result-status status-success";
+        } else if (data.orderCancelTransaction) {
+          statusElement.textContent = "Megbízás törölve";
+          statusElement.className = "result-status status-error";
+
+          const reason = cancelTransaction.reason || "Ismeretlen ok";
+          reasonElement.textContent = reason;
+          reasonBox.style.display = "block";
+
+          if (reason === "MARKET_HALTED") {
+            document.getElementById("result-error").textContent =
+                    "A piac jelenleg zárva van vagy a kereskedés szünetel. A pozíció nem nyílt meg.";
+          } else {
+            document.getElementById("result-error").textContent =
+                    "A megbízás nem került végrehajtásra.";
+          }
+        } else if (data.orderCreateTransaction) {
+          statusElement.textContent = "Megbízás elküldve";
+          statusElement.className = "result-status status-pending";
+          document.getElementById("result-error").textContent =
+                  "A megbízás létrejött, de a végrehajtás még nincs igazolva.";
+        } else {
+          statusElement.textContent = "Ismeretlen tranzakció";
+          statusElement.className = "result-status status-error";
+        }
+
+      } catch (error) {
+        document.getElementById("result-error").textContent =
+                "A válasz feldolgozása nem sikerült.";
+
+        console.error(error);
+      }
+    });
+  </script>
+
+  <style>
+    .position-info {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1em;
+      margin: 1.5em 0;
+    }
+
+    .position-direction {
+      padding: .8em 1em;
+      background: #f5f5f5;
+      border-radius: 6px;
+    }
+
+    .direction-long {
+      color: #16803c;
+      font-weight: bold;
+    }
+
+    .direction-short {
+      color: #c0392b;
+      font-weight: bold;
+    }
+
+    .result-card {
+      padding: 1.5em;
+      margin: 1em 0;
+      background: #f5f5f5;
+      border-radius: 8px;
+    }
+
+    .result-header {
+      margin-bottom: 1.5em;
+    }
+
+    .result-status {
+      display: inline-block;
+      padding: .5em 1em;
+      border-radius: 20px;
+      font-weight: bold;
+    }
+
+    .status-success {
+      background: #e5f5e9;
+      color: #16803c;
+    }
+
+    .status-error {
+      background: #fde8e8;
+      color: #c0392b;
+    }
+
+    .status-pending {
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1.5em;
+    }
+
+    .result-item {
+      display: flex;
+      flex-direction: column;
+      gap: .4em;
+      overflow-wrap: anywhere;
+    }
+
+    .result-label {
+      opacity: .7;
+      font-size: .9em;
+    }
+
+    .result-item strong {
+      font-size: 1.2em;
+    }
+
+    .result-reason {
+      margin-top: 1.5em;
+      padding: 1em;
+      background: #fde8e8;
+      border-left: 4px solid #c0392b;
+      border-radius: 6px;
+    }
+
+    .result-reason p {
+      margin-bottom: 0;
+    }
+
+    .error-box {
+      padding: 1em;
+      margin: 1em 0;
+      background: #fff0f0;
+      border-left: 4px solid #c0392b;
+      border-radius: 6px;
+    }
+
+    #result-error {
+      color: #c0392b;
+    }
+
+    @media screen and (max-width: 600px) {
+      .result-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </article>
-
 </body>
 </html>
